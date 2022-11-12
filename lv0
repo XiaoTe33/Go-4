@@ -1,0 +1,291 @@
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+)
+
+func main() {
+	createFileIfNotExist()
+	var b int
+	for {
+		if b == 1 {
+			fmt.Println("程序已退出")
+			break
+		}
+		fmt.Println("—————————")
+		fmt.Println("1.注册")
+		fmt.Println("0.退出")
+		fmt.Println("————————")
+		fmt.Println("请输入操作：")
+		var a int
+		fmt.Scan(&a)
+		switch a {
+		case 1:
+			data := toMap()
+			var username string
+			var password string
+			fmt.Println("请输入用户名：")
+			fmt.Scan(&username)
+			fmt.Println("请输入密码：")
+			fmt.Scan(&password)
+			data[username] = password
+			toFile(data)
+		default:
+			b = 1
+		}
+	}
+
+}
+func createFileIfNotExist() {
+	f, err := os.Open("users.data")
+	if err != nil {
+		os.Create("users,data")
+	}
+	f.Close()
+}
+func toFile(data map[string]string) {
+
+	b, _ := json.Marshal(data)
+	fmt.Println(string(b))
+	f, _ := os.Create("users.data")
+	f.Write(b)
+}
+func toMap() (a map[string]string) {
+	f, _ := os.Open("users.data")
+	defer f.Close()
+	b := make([]byte, 300)
+	for {
+		n, _ := f.Read(b)
+		if n == 0 {
+			break
+		}
+		fmt.Println(string(b))
+	}
+	var s []byte
+	for i := 0; i < len(b); i++ {
+		if b[i] == 0 {
+			break
+		}
+		s = append(s, b[i])
+	}
+	fmt.Println(s)
+	err := json.Unmarshal(s, &a)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(a)
+	return
+}
+
+var user map[string]string
+
+//func main() {
+//	f, err := os.Open("file.txt")
+//	if err != nil {
+//		os.Create("file.txt")
+//	}
+//	f.Close()
+//}
+
+//
+//func main() {
+//	data := make(map[string]string)
+//	var name = "Te"
+//	data[name] = "987654321"
+//	b, _ := json.Marshal(data)
+//	fmt.Println(string(b))
+//	f, _ := os.Create("users.data")
+//	f.Write(b)
+//
+//}
+
+//func main() {
+//	f, _ := os.Open("users.data")
+//	defer f.Close()
+//	b := make([]byte, 300)
+//	for {
+//		n, _ := f.Read(b)
+//		if n == 0 {
+//			break
+//		}
+//		fmt.Println(string(b))
+//	}
+//	var s []byte
+//	for i := 0; i < len(b); i++ {
+//		if b[i] == 0 {
+//			break
+//		}
+//		s = append(s, b[i])
+//	}
+//	fmt.Println(s)
+//	var a map[string]string
+//	err := json.Unmarshal(s, &a)
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	fmt.Println(a)
+//
+//}
+
+//
+//func main() {
+//	b := []byte(`{
+//    "company": "itcast",
+//    "subjects": [
+//        "Go",
+//        "C++",
+//        "Python",
+//        "Test"
+//    ],
+//    "isok": true,
+//    "price": 666.666
+//}`)
+//
+//	var t interface{}
+//	err := json.Unmarshal(b, &t)
+//	if err != nil {
+//		fmt.Println("json err:", err)
+//	}
+//	fmt.Println(t)
+//
+//	//使用断言判断类型
+//	m := t.(map[string]interface{})
+//	for k, v := range m {
+//		switch vv := v.(type) {
+//		case string:
+//			fmt.Println(k, "is string", vv)
+//		case int:
+//			fmt.Println(k, "is int", vv)
+//		case float64:
+//			fmt.Println(k, "is float64", vv)
+//		case bool:
+//			fmt.Println(k, "is bool", vv)
+//		case []interface{}:
+//			fmt.Println(k, "is an array:")
+//			for i, u := range vv {
+//				fmt.Println(i, u)
+//			}
+//		default:
+//			fmt.Println(k, "is of a type I don't know how to handle")
+//		}
+//	}
+//	fmt.Println(b)
+//}
+
+//
+//func main() {
+//	fin, err := os.Open("./xxx.txt") //打开文件
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	defer fin.Close()
+//
+//	buf := make([]byte, 1) //开辟1024个字节的slice作为缓冲
+//	for {
+//		n, _ := fin.Read(buf) //读文件
+//		if n == 0 {           //0表示已经到文件结束
+//			break
+//		}
+//		fmt.Println(n)
+//		fmt.Println(string(buf)) //输出读取的内容
+//	}
+//}
+
+//type wish struct {
+//	Id    string `json:"id"`
+//	Name  string `json:"name"`
+//	Wish1 string `json:"wish1"`
+//	Wish2 string `json:"wish2"`
+//	Wish3 string `json:"wish3"`
+//}
+//
+//func main() {
+//	a := `{
+//    "id":2022214174,
+//    "name":"柯南",
+//    "wish1":"雪莉",
+//    "wish2":"梓川咲太",
+//    "wish3":"桜岛麻衣"
+//}`
+//	var myWish wish
+//	b := []byte(a)
+//	_ = json.Unmarshal(b, &myWish)
+//	fmt.Println(myWish)
+//}
+
+//type choice struct {
+//	Name    string `json:"name"`
+//	Number  string `json:"number"`
+//	Teacher string `json:"teacher"`
+//}
+//
+//func main06() {
+//	var c choice
+//	c.Name = "刘力延"
+//	c.Number = "2022213133"
+//	c.Teacher = "蜡笔小新"
+//
+//	s, _ := json.Marshal(c)
+//	fmt.Println(string(s))
+//}
+
+//type IT struct {
+//	Company  string
+//	Subjects []string
+//	IsOk     bool
+//	Price    float64
+//}
+//
+//func main05() {
+//	m := make(map[string]int)
+//	m["c"] = 1
+//	value, ok := m["c"]
+//	fmt.Println(value, ok)
+//}
+//func main04() {
+//	t1 := IT{"itcast", []string{"Go", "C++", "Python", "Test"}, true, 666.666}
+//	//输出结果：{"Company":"itcast","Subjects":["Go","C++","Python","Test"],"IsOk":true,"Price":666.666}
+//
+//	b, err := json.Marshal(t1)
+//	if err != nil {
+//		fmt.Println("json err:", err)
+//	}
+//	fmt.Println(string(b))
+//	main02()
+//} //非格式化输出
+//
+//func main03() {
+//	t1 := IT{"itcast", []string{"Go", "C++", "Python", "Test"}, true, 666.666}
+//	//输出结果：{"Company":"itcast","Subjects":["Go","C++","Python","Test"],"IsOk":true,"Price":666.666}
+//
+//	b, err := json.MarshalIndent(t1, "", "    ")
+//	if err != nil {
+//		fmt.Println("json err:", err)
+//	}
+//	fmt.Println(string(b))
+//
+//} //格式化输出
+
+//func main02() {
+//	a := 3465 * time.Second
+//	round := a.Truncate(time.Second)
+//	fmt.Println(round)
+//	fmt.Println(a.Truncate(10 * time.Second))
+//	fmt.Println(a.Truncate(time.Minute))
+//	fmt.Println(a.Truncate(time.Hour))
+//	b := 3677 * time.Second
+//	fmt.Println(b.Truncate(time.Hour))
+//	//57m45s
+//	//57m40s
+//	//57m0s
+//	//0s
+//	//1h0m0s
+//} //time取整
+//
+//func main01() {
+//	a := time.Now()
+//	h, m, s := a.Clock()
+//	fmt.Println(h, m, s)
+//} //获取时分秒
