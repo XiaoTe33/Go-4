@@ -1,0 +1,194 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var wg sync.WaitGroup
+
+func main() {
+	go func() {
+		for {
+			go func() {
+				timer := time.Now()
+				for i := 1; i <= t; i++ {
+					a := modeMap[i]
+					if a[0] == 0 {
+						if a[timer.Weekday()+1] == 1 {
+							if timer.Second() == secMap[i] && timer.Minute() == minMap[i] && timer.Hour() == hourMap[i] && isOpen[i] == 1 {
+								fmt.Println("闹铃响了")
+								fmt.Println("备注:", stringMap[i])
+							}
+						}
+					} else if timer.Second() == secMap[i] && timer.Minute() == minMap[i] && timer.Hour() == hourMap[i] && isOpen[i] == 1 {
+						fmt.Println("闹铃响了")
+						fmt.Println("备注:", stringMap[i])
+						modeMap[i] = [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+					}
+				}
+			}()
+			time.Sleep(time.Second)
+		}
+
+	}()
+	go func() {
+		for {
+			fmt.Println("请输入操作:")
+			fmt.Println("1.新增闹钟")
+			fmt.Println("2.查看当前闹钟")
+			fmt.Println("0.退出系统")
+			q := 0
+			fmt.Scan(&q)
+			if q == 0 {
+				wg.Done()
+				break
+			}
+			switch q {
+			case 1:
+				addClock()
+			case 2:
+				showClocks()
+
+			}
+
+		}
+	}()
+
+	wg.Add(1)
+	wg.Wait()
+}
+
+var hourMap = map[int]int{}
+var minMap = map[int]int{}
+var secMap = map[int]int{}
+var modeMap = map[int][8]int{}
+var stringMap = map[int]string{}
+var isOpen = map[int]int{}
+var t = 1
+
+func addClock() {
+	var t1, t2, t3, m1, o1 int
+	var f1 string
+	fmt.Println("请设定时间（时）")
+	fmt.Scan(&t1)
+	hourMap[t] = t1
+	fmt.Println("请设定时间（分）")
+	fmt.Scan(&t2)
+	minMap[t] = t2
+	fmt.Println("请设定时间（秒）")
+	fmt.Scan(&t3)
+	secMap[t] = t3
+	fmt.Println("请设定模式")
+	showMode()
+	fmt.Scan(&m1)
+	switch m1 {
+	case 0:
+		modeMap[t] = [8]int{1, 0, 0, 0, 0, 0, 0, 0}
+	case 1:
+		var a [8]int
+		for i := range modeMap[t] {
+			if i == 1 {
+				fmt.Println("星期一是否开启(1.开  0.不开)")
+				fmt.Scan(&a[2])
+			}
+			if i == 2 {
+				fmt.Println("星期二是否开启(1.开  0.不开)")
+				fmt.Scan(&a[3])
+			}
+			if i == 3 {
+				fmt.Println("星期三是否开启(1.开  0.不开)")
+				fmt.Scan(&a[4])
+			}
+			if i == 4 {
+				fmt.Println("星期四是否开启(1.开  0.不开)")
+				fmt.Scan(&a[5])
+			}
+			if i == 5 {
+				fmt.Println("星期五是否开启(1.开  0.不开)")
+				fmt.Scan(&a[6])
+			}
+			if i == 6 {
+				fmt.Println("星期六是否开启(1.开  0.不开)")
+				fmt.Scan(&a[7])
+			}
+			if i == 7 {
+				fmt.Println("星期日是否开启(1.开  0.不开)")
+				fmt.Scan(&a[1])
+			}
+
+		}
+		modeMap[t] = a
+	}
+	fmt.Println("请设定备注")
+	fmt.Scan(&f1)
+	stringMap[t] = f1
+	fmt.Println("请设定是否开启(1.开  0.不开)")
+	fmt.Scan(&o1)
+	isOpen[t] = o1
+	t++
+}
+func showMode() {
+	fmt.Println("0.仅一次")
+	fmt.Println("1.设置星期")
+}
+func showClocks() {
+	fmt.Print("时间   时    分    秒   备注：666     开启星期：md 一二三四五六日")
+	fmt.Println()
+
+	for i := 1; i < t; i++ {
+		fmt.Print("时间   ", hourMap[i], "  :  ")
+		fmt.Print("", minMap[i], "  :  ")
+		fmt.Print("", secMap[i], "   ")
+		fmt.Print("备注：", stringMap[i], "      ")
+		fmt.Print("开启星期：", modeMap[i], "")
+	}
+	fmt.Println()
+}
+
+-------------------测试数据------------
+/*
+1
+1
+1
+1
+0
+666
+1
+2
+
+*/
+--------------------测试结果--------------------------
+/*
+请输入操作:
+1.新增闹钟
+2.查看当前闹钟
+0.退出系统
+1
+请设定时间（时）
+1
+请设定时间（分）
+1
+请设定时间（秒）
+1
+请设定模式
+0.仅一次
+1.设置星期
+0
+请设定备注
+666
+请设定是否开启(1.开  0.不开)
+1
+请输入操作:
+1.新增闹钟
+2.查看当前闹钟
+0.退出系统
+2
+时间   时    分    秒   备注：666     开启星期：md 一二三四五六日
+时间   1  :  1  :  1   备注：666      开启星期：[1 0 0 0 0 0 0 0]
+请输入操作:
+1.新增闹钟
+2.查看当前闹钟
+0.退出系统
+*/
