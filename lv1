@@ -1,0 +1,62 @@
+package main
+
+import "fmt"
+
+func main() {
+	var skillName string
+	var a int
+	fmt.Println("请选择格式\n1.格式1\n2.格式2\n3.格式3\n4.格式4\n5.格式5")
+	fmt.Scan(&a)
+	fmt.Println("请输入技能名称：")
+	fmt.Scan(&skillName)
+	switch a {
+	case 1:
+		way1(skillName) //匿名函数
+	case 2:
+		way2(skillName) //匿名函数
+	case 3:
+		way3(skillName) //不匿名函数
+	case 4:
+		way4(skillName) //不匿名函数
+	case 5:
+		way5(skillName) //不匿名函数
+	}
+}
+func ReleaseSkill(skillNames string, releaseSkillFunc func(string)) { //总函数
+	releaseSkillFunc(skillNames)
+}
+
+func way1(skillName string) {
+	ReleaseSkill(skillName, func(name string) {
+		fmt.Println("吃我一招【", name, "】吧！")
+	})
+} //匿名函数
+
+func way2(skillName string) {
+	ReleaseSkill(skillName, func(name string) {
+		fmt.Println("我直接来一招【", name, "】，就问你怕不怕")
+	})
+} //匿名函数
+
+func way3(skillName string) {
+	ReleaseSkill(skillName, ReleaseOfWay3)
+} //不匿名函数
+func ReleaseOfWay3(name string) {
+	fmt.Println("这招【", name, "】你绝对顶不住！")
+}
+
+func way4(skillName string) {
+	ReleaseSkill(skillName, ReleaseOfWay4)
+} //不匿名函数
+func ReleaseOfWay4(name string) {
+	fmt.Println("感受一下【", name, "】的恐怖吧！")
+}
+
+func way5(skillName string) {
+	type r func(string)
+	var ReleaseOfWay5 r
+	ReleaseOfWay5 = func(name string) {
+		fmt.Println("看招！【", name, "】！")
+	}
+	ReleaseSkill(skillName, ReleaseOfWay5)
+} //不匿名函数
