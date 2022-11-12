@@ -1,0 +1,65 @@
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+var wg sync.WaitGroup
+
+func main() {
+	go func() {
+		ticker := time.NewTicker(30 * time.Second)
+		for {
+			select {
+			case <-ticker.C:
+				fmt.Println("芜湖！起飞！")
+			}
+		}
+	}()
+	//go func() {
+	//	for {
+	//		time.Sleep(30 * time.Second)
+	//		fmt.Println("芜湖！起飞！")
+	//	}
+	//}()
+	go func() {
+		for {
+			t := time.Now()
+			h, m, s := t.Clock()
+			if h == 2 && m == 0 && s == 0 {
+				fmt.Println("我还能再战2小时")
+			}
+			time.Sleep(1 * time.Second)
+		}
+	}()
+	go func() {
+		for {
+			t := time.Now()
+			h, m, s := t.Clock()
+			if h == 6 && m == 0 && s == 0 {
+				fmt.Println("我要去图书馆开卷！")
+			}
+			time.Sleep(1 * time.Second)
+		}
+	}()
+	//go func() {
+	//	for {
+	//		t := time.Now()
+	//		fmt.Println(t.Second())
+	//		time.Sleep(time.Second)
+	//	}
+	//}() //每秒报时
+	//go func() {
+	//	for i := 0; i <= 60; i++ {
+	//		if i == 60 {
+	//			i = 0
+	//		}
+	//		fmt.Println(i)
+	//		time.Sleep(time.Second)
+	//
+	//	}
+	//}()
+
+}
